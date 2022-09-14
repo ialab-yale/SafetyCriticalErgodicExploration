@@ -2,19 +2,18 @@ import sys
 sys.path.append('../../')
 import numpy as np
 
-from erg_traj_opt_lib.motion_model import SingleIntegrator
+from erg_traj_opt_lib.motion_model import MultiRobotSingleIntegrator
 from erg_traj_opt_lib.target_distribution import TargetDistribution
 from erg_traj_opt_lib.fourier_utils import BasisFunc, get_phik
-from erg_traj_opt_lib.erg_traj_opt import ErgodicTrajectoryOpt
+from erg_traj_opt_lib.ma_erg_traj_opt import MAErgodicTrajectoryOpt
 from erg_traj_opt_lib.obstacle import Obstacle
 
 import matplotlib.pyplot as plt
-from label_lines import *
 
 if __name__=='__main__':
 
 
-    robot_model     = SingleIntegrator()
+    robot_model     = MAErgodicTrajectoryOpt()
     target_distr    = TargetDistribution()
     basis           = BasisFunc(n_basis=[8,8])
 
@@ -57,7 +56,7 @@ if __name__=='__main__':
 
         print('solving traj')
         args.update({'alpha' : alpha})
-        (x, u), isConv = traj_opt.get_trajectory(args=args)
+        x, u = traj_opt.get_trajectory(args=args)
         erg_vals.append(traj_opt.eval_erg_metric(x, args))
         # plotting function
         # for obs in traj_opt.obs:

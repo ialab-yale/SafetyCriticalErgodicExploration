@@ -23,37 +23,23 @@ from .fourier_utils import BasisFunc, get_phik, get_ck
 from .target_distribution import TargetDistribution
 
 
-class ErgodicTrajectoryOpt(object):
+class MAErgodicTrajectoryOpt(object):
     def __init__(self, robot_model, obstacles, 
                         basis=None, time_horizon=500, args=None) -> None:
         self.time_horizon    = time_horizon
         self.robot_model     = robot_model
-        if basis is None:
-            self.basis = BasisFunc(n_basis=[8]*2)
-        else:
-            self.basis = basis
+        self.basis = basis
         self.erg_metric      = ErgodicMetric(self.basis)
-        n,m = self.robot_model.n, self.robot_model.m
-        if args is None:
-            self.target_distr = TargetDistribution()
-            def_args = {
-                'x0' : np.array([2.0,3.25, 0.]),
-                'xf' : np.array([1.75, -0.75, 0.]),
-                'phik' : get_phik(self.target_distr.evals, self.basis),
-                'wrksp_bnds' : np.array([[0.,3.5],[-1.,3.5]])
-            }
-            args = def_args
+        self._n, self._m, self._N = self.robot_model.n, self.robot_model.m, self.robot_model.N
+
         self.def_args = args
-        ### initial conditions 
-        x = np.linspace(args['x0'], args['xf'], time_horizon, endpoint=True)
-        u = np.zeros((time_horizon, self.robot_model.m))
-        self.init_sol = np.concatenate([x, u], axis=1)
-        self.curr_sol = (onp.array(x), onp.array(u))
+
         self.obs = obstacles
 
+        alpha = args['alpha']
         self.cbf_consts = []
         for obs in self.obs: 
-            self.cbf_consts.append(sdf2cbf(self.robot_model.f, obs.distance))
+            self.cbf_consts.append(sdf2cbf(self.robot_model.f, obs.distance, alpha=alpha))
 
         def _emap(x, args):
             """ Function that maps states to workspace """
@@ -92,7 +78,7 @@ class ErgodicTrajectoryOpt(object):
             x, u = z[:, :n], z[:, n:]
             # p = x[:,:2] # extract just the position component of the trajectory
             # obs_val = [vmap(_ob.distance)(p).flatten() for _ob in self.obs]
-            obs_val = [vmap(_cbf_ineq, in_axes=(0,0,None))(x, u, args['alpha']).flatten() for _cbf_ineq in self.cbf_consts]
+            obs_val = [vmap(_cbf_ineq)(x, u).flatten() for _cbf_ineq in self.cbf_consts]
 
             ctrl_box = [(np.abs(u) - 6.).flatten()]
             _ineq_list = ctrl_box + obs_val
