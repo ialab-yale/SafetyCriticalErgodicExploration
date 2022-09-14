@@ -28,7 +28,7 @@ if __name__=='__main__':
         'xf' : np.ones((N_robots, n_states))+np.random.normal(0., 0.1, size=(N_robots, n_states)),
         'phik' : get_phik(target_distr.evals, basis),
         'wrksp_bnds' : np.array([[-1.1,1.1],[-1.1,1.1]]),
-        'alpha' : 0.1
+        'alpha' : 0.2
     }
 
     obs = [

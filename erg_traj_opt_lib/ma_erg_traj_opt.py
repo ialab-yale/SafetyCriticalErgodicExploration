@@ -16,7 +16,7 @@ import pickle as pkl ## <--- this will probably get pushed up to user side
 ### Local imports
 from .solver import AugmentedLagrangian
 from .ergodic_metric import ErgodicMetric
-from .cbf_utils import sdf2cbf
+from .cbf_utils import sdf2cbf, dist_func
 from .fourier_utils import BasisFunc, get_phik, get_ck
 from .target_distribution import TargetDistribution
 
@@ -41,6 +41,11 @@ class MAErgodicTrajectoryOpt(object):
         self.cbf_consts = []
         for obs in self.obs: 
             self.cbf_consts.append(sdf2cbf(self.robot_model.f, vmap(obs.distance)))
+        # self.cbf_ma_constr = [
+        #     sdf2cbf(self.robot_model.f)
+        # ]
+        self.cbf_ma = sdf2cbf(self.robot_model.f, dist_func)
+
         def _emap(x, args):
             """ Function that maps states to workspace """
             wrksp_bnds = args['wrksp_bnds']
@@ -79,17 +84,20 @@ class MAErgodicTrajectoryOpt(object):
         def ineq_constr(z, args):
             """ control inequality constraints"""
             x, u = z[:, :, :_n], z[:, :, _n:]
+            # dist = []
+            # for i in range(_N):
+            #     for j in range(i,_N):
+            #         dist.append(
+            #             0.1-np.linalg.norm(x[:,i,:] - x[:,j,:], axis=1)
+            #         )
 
-            d1 = 0.1-np.linalg.norm(x[:,0,:] - x[:,1,:], axis=1)
-            d2 = 0.1-np.linalg.norm(x[:,1,:] - x[:,2,:], axis=1)
-            d3 = 0.1-np.linalg.norm(x[:,0,:] - x[:,2,:], axis=1)
-            dist = [d1.flatten(), d2.flatten(), d3.flatten()]
             # p = x[:,:2] # extract just the position component of the trajectory
             # obs_val = [vmap(_ob.distance)(p).flatten() for _ob in self.obs]
             obs_val = [vmap(_cbf_ineq, in_axes=(0,0,None))(x, u, args['alpha']).flatten() for _cbf_ineq in self.cbf_consts]
+            inter_col = [vmap(self.cbf_ma, in_axes=(0,0,None))(x, u, args['alpha']).flatten()]
 
             ctrl_box = [(np.abs(u) - 6.).flatten()]
-            _ineq_list = ctrl_box + obs_val + dist
+            _ineq_list = ctrl_box + obs_val + inter_col
             return np.concatenate(_ineq_list)
 
         self.eq_constr = eq_constr
