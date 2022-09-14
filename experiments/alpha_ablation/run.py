@@ -36,7 +36,7 @@ if __name__=='__main__':
         Obstacle(pos=np.array([1.5,-0.5]),  half_dims=np.array([0.2,0.2]), th=0., p=2),
     ]
 
-    alphas = np.arange(0.1, 1.0, 0.1)
+    alphas = np.arange(0.1, 1.0, 0.2)
 
     traj_opt = ErgodicTrajectoryOpt(robot_model, obstacles=obs, basis=basis, time_horizon=200, args=args)
 
