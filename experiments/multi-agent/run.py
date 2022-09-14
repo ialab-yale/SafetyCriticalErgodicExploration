@@ -25,14 +25,14 @@ if __name__=='__main__':
     np.random.seed(10)
     args = {
         'x0' : -np.ones((N_robots, n_states))+np.random.normal(0., 0.1, size=(N_robots, n_states)),
-        'xf' : np.ones((N_robots, n_states))+np.random.normal(0., 0.1, size=(N_robots, n_states)),
+        'xf' : np.ones((N_robots, n_states))+np.random.normal(0., 0.3, size=(N_robots, n_states)),
         'phik' : get_phik(target_distr.evals, basis),
         'wrksp_bnds' : np.array([[-1.1,1.1],[-1.1,1.1]]),
         'alpha' : 0.2
     }
 
     obs = [
-        Obstacle(pos=np.array([0.,0.]),     half_dims=np.array([0.5,0.5]), th=0.),
+        Obstacle(pos=np.array([0.,0.]), half_dims=np.array([0.25,0.25]), th=0.),
     ]
 
 
@@ -57,6 +57,10 @@ if __name__=='__main__':
         plt.plot(x[:,i, 0], x[:,i, 1], linestyle='dashdot')#, c='m', alpha=alpha)
     # plt.tight_layout()
     # plt.axis('equal')
-    
+
+    plt.figure()
+    plt.plot(x[:,0,:2]-x[:,1,:2])
+    # for i in range(robot_model.N):
+    #     plt.plot(x[:,i,:2])    
 
     plt.show()
