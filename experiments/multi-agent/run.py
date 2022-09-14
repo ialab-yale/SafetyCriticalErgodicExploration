@@ -13,31 +13,30 @@ import matplotlib.pyplot as plt
 if __name__=='__main__':
 
 
-    robot_model     = MAErgodicTrajectoryOpt()
+    robot_model     = MultiRobotSingleIntegrator()
+    n_states        = robot_model.n
+    N_robots        = robot_model.N
+    m_ctrls         = robot_model.m
+
     target_distr    = TargetDistribution()
     basis           = BasisFunc(n_basis=[8,8])
 
+    time_horizon = 100
+    np.random.seed(10)
     args = {
-        'x0' : np.array([-3.0,-0.0]),
-        'xf' : np.array([3.0, 0.0]),
+        'x0' : -np.ones((N_robots, n_states))+np.random.normal(0., 0.1, size=(N_robots, n_states)),
+        'xf' : np.ones((N_robots, n_states))+np.random.normal(0., 0.1, size=(N_robots, n_states)),
         'phik' : get_phik(target_distr.evals, basis),
-        'wrksp_bnds' : np.array([[-3.1,3.1],[-2.1,2.1]]),
-        'alpha' : 0.99
+        'wrksp_bnds' : np.array([[-1.1,1.1],[-1.1,1.1]]),
+        'alpha' : 0.1
     }
 
     obs = [
         Obstacle(pos=np.array([0.,0.]),     half_dims=np.array([0.5,0.5]), th=0.),
-        Obstacle(pos=np.array([0.,1.5]),   half_dims=np.array([0.2,0.2]), th=0., p=2),
-        Obstacle(pos=np.array([0.,-1.5]),  half_dims=np.array([0.2,0.2]), th=0., p=2),
-        Obstacle(pos=np.array([1.5,0.5]),   half_dims=np.array([0.2,0.2]), th=0., p=2),
-        Obstacle(pos=np.array([-1.5,0.5]),  half_dims=np.array([0.2,0.2]), th=0., p=2),
-        Obstacle(pos=np.array([-1.5,-0.5]), half_dims=np.array([0.2,0.2]), th=0., p=2),
-        Obstacle(pos=np.array([1.5,-0.5]),  half_dims=np.array([0.2,0.2]), th=0., p=2),
     ]
 
-    alphas = np.arange(0.1, 1.0, 0.1)
 
-    traj_opt = ErgodicTrajectoryOpt(robot_model, obstacles=obs, basis=basis, time_horizon=200, args=args)
+    traj_opt = MAErgodicTrajectoryOpt(robot_model, obstacles=obs, basis=basis, time_horizon=200, args=args)
 
     X, Y = np.meshgrid(*[np.linspace(wks[0],wks[1]) for wks in args['wrksp_bnds']])
     pnts = np.vstack([X.ravel(), Y.ravel()]).T
@@ -48,27 +47,16 @@ if __name__=='__main__':
         _mixed_vals = np.maximum(_vals, _mixed_vals)
     
 
-    erg_vals = []
+    # plt.figure(figsize=(3,2))
 
-    plt.figure(figsize=(3,2))
+    print('solving traj')
+    (x, u), isConv = traj_opt.get_trajectory(args=args)
 
-    for alpha in alphas:
-
-        print('solving traj')
-        args.update({'alpha' : alpha})
-        x, u = traj_opt.get_trajectory(args=args)
-        erg_vals.append(traj_opt.eval_erg_metric(x, args))
-        # plotting function
-        # for obs in traj_opt.obs:
-        #     _patch = obs.draw()
-        #     plt.gca().add_patch(_patch)
-        plt.contour(X, Y, _mixed_vals, levels=[-0.01,0.,0.01], linewidths=2, colors='k')
-        plt.plot(x[:,0], x[:,1], label="{:.1f}".format(alpha), linestyle='dashdot')#, c='m', alpha=alpha)
-
-        labelLines(plt.gca().get_lines(), align=False, zorder=2.5)
-        plt.tight_layout()
-        plt.axis('equal')
+    plt.contour(X, Y, _mixed_vals, levels=[-0.01,0.,0.01], linewidths=2, colors='k')
+    for i in range(robot_model.N):
+        plt.plot(x[:,i, 0], x[:,i, 1], linestyle='dashdot')#, c='m', alpha=alpha)
+    # plt.tight_layout()
+    # plt.axis('equal')
     
-    plt.figure()
-    plt.plot(alphas, erg_vals)
+
     plt.show()
