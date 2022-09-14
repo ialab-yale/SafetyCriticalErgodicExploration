@@ -37,7 +37,7 @@ class Single3DoFIntegrator(object):
         self.f = f
 
 class MultiRobotSingleIntegrator(object):
-    def __init__(self, N=3) -> None:
+    def __init__(self, N=4) -> None:
         self.dt = 0.1
         self.n = 2
         self.m = 2

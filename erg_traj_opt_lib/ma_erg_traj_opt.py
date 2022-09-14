@@ -84,15 +84,6 @@ class MAErgodicTrajectoryOpt(object):
         def ineq_constr(z, args):
             """ control inequality constraints"""
             x, u = z[:, :, :_n], z[:, :, _n:]
-            # dist = []
-            # for i in range(_N):
-            #     for j in range(i,_N):
-            #         dist.append(
-            #             0.1-np.linalg.norm(x[:,i,:] - x[:,j,:], axis=1)
-            #         )
-
-            # p = x[:,:2] # extract just the position component of the trajectory
-            # obs_val = [vmap(_ob.distance)(p).flatten() for _ob in self.obs]
             obs_val = [vmap(_cbf_ineq, in_axes=(0,0,None))(x, u, args['alpha']).flatten() for _cbf_ineq in self.cbf_consts]
             inter_col = [vmap(self.cbf_ma, in_axes=(0,0,None))(x, u, args['alpha']).flatten()]
 
