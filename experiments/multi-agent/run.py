@@ -9,6 +9,7 @@ from erg_traj_opt_lib.ma_erg_traj_opt import MAErgodicTrajectoryOpt
 from erg_traj_opt_lib.obstacle import Obstacle
 
 import matplotlib.pyplot as plt
+import pickle as pkl
 
 if __name__=='__main__':
 
@@ -23,18 +24,36 @@ if __name__=='__main__':
 
     time_horizon = 100
     np.random.seed(10)
+
+    x0 = np.array([
+        [1.0, -0.5],
+        [2.5, -0.5],
+        [1.0, 3.0],
+        [2.0, 3.0]
+    ])
+    xf = np.array([
+        [1.0, 3.0],
+        [2.0, 3.0],
+        [1.0, -0.5],
+        [2.5, -0.5]
+    ])
     args = {
-        'x0' : -np.ones((N_robots, n_states))+np.random.normal(0., 0.1, size=(N_robots, n_states)),
-        'xf' : np.ones((N_robots, n_states))+np.random.normal(0., 0.3, size=(N_robots, n_states)),
+        'x0' : x0,
+        'xf' : xf,
         'phik' : get_phik(target_distr.evals, basis),
-        'wrksp_bnds' : np.array([[-1.1,1.1],[-1.1,1.1]]),
-        'alpha' : 0.2
+        'wrksp_bnds' : np.array([[0.,3.5],[-1.,3.5]]),
+        'alpha' : 0.1
     }
 
-    obs = [
-        Obstacle(pos=np.array([0.,0.]), half_dims=np.array([0.25,0.25]), th=0.),
-    ]
-
+    obs_info = pkl.load(open('../../erg_traj_opt_lib/obs_info.pkl', 'rb'))
+    obs = []
+    for obs_name in obs_info:
+        _obs = Obstacle(
+            pos=np.array(obs_info[obs_name]['pos']), 
+            half_dims=np.array(obs_info[obs_name]['half_dims']),
+            th=obs_info[obs_name]['rot']
+        )
+        obs.append(_obs)
 
     traj_opt = MAErgodicTrajectoryOpt(robot_model, obstacles=obs, basis=basis, time_horizon=200, args=args)
 
@@ -50,8 +69,12 @@ if __name__=='__main__':
     # plt.figure(figsize=(3,2))
 
     print('solving traj')
-    (x, u), isConv = traj_opt.get_trajectory(args=args)
+    (x, u), isConv = traj_opt.get_trajectory(args=args, max_iter=20000)
 
+    _ineq = traj_opt.ineq_constr(traj_opt.sol['x'], args)
+    plt.figure(2)
+    plt.plot(_ineq)
+    plt.show()
     plt.contour(X, Y, _mixed_vals, levels=[-0.01,0.,0.01], linewidths=2, colors='k')
     for i in range(robot_model.N):
         plt.plot(x[:,i, 0], x[:,i, 1], linestyle='dashdot')#, c='m', alpha=alpha)
