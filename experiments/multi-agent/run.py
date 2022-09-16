@@ -78,9 +78,15 @@ if __name__=='__main__':
     plt.contour(X, Y, _mixed_vals, levels=[-0.01,0.,0.01], linewidths=2, colors='k')
     for i in range(robot_model.N):
         plt.plot(x[:,i, 0], x[:,i, 1], linestyle='dashdot')#, c='m', alpha=alpha)
+        # plt.scatter(x[0,i,0], x[0, i, 1], s=80, facecolors='none',)
+        plt.scatter(x[-1,i,0], x[-1, i, 1], s=80, marker='o')
         fname = 'optimized_trajectories_' + str(i) + '.npy'
         with open(fname, 'wb') as f:
             np.save(f, np.array([x[:,i, 0], x[:,i, 1]]))
+    plt.tick_params(left = False, right = False , labelleft = False , labelbottom = False, bottom = False)
+    plt.legend(['Robot 1', 'Robot 2', 'Robot 3', 'Robot 4'], loc='upper right')
+    # axes = plt.gca()
+    # axes.set_aspect(0.7777)
     # plt.tight_layout()
     # plt.axis('equal')
 

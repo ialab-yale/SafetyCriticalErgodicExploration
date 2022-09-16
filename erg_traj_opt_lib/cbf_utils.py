@@ -11,5 +11,10 @@ def dist_func(x):
     dist = [d1.flatten(), d2.flatten(), d3.flatten(), d4.flatten(), d5.flatten(), d6.flatten()]
     return np.array(dist)
 
+# CBF Inequality Constraints
 def sdf2cbf(f, constr):
     return lambda x, u, alpha: constr(f(x,u)) - (1.-alpha) * constr(x)
+
+# # Regular Inequality Constraints
+# def sdf2cbf(f, constr):
+#     return lambda x, u, alpha: constr(x)

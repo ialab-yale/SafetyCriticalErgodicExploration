@@ -37,6 +37,7 @@ if __name__=='__main__':
     ]
 
     alphas = np.arange(0.1, 1.0, 0.2)
+    # alphas = np.array([0.25, 0.50, 0.75, 1.0])
 
     traj_opt = ErgodicTrajectoryOpt(robot_model, obstacles=obs, basis=basis, time_horizon=200, args=args)
 
@@ -64,7 +65,9 @@ if __name__=='__main__':
         #     _patch = obs.draw()
         #     plt.gca().add_patch(_patch)
         plt.contour(X, Y, _mixed_vals, levels=[-0.01,0.,0.01], linewidths=2, colors='k')
-        plt.plot(x[:,0], x[:,1], label="{:.1f}".format(alpha), linestyle='dashdot')#, c='m', alpha=alpha)
+        # plt.plot(x[:,0], x[:,1], label="{:.1f}".format(alpha), linestyle='dashdot')#, c='m', alpha=alpha)
+        plt.plot(x[:,0], x[:,1], linestyle='dashdot')#, c='m', alpha=alpha)
+        plt.legend(['0.25, 0.50, 0.75, 1.00'])
 
         labelLines(plt.gca().get_lines(), align=False, zorder=2.5)
         plt.tight_layout()

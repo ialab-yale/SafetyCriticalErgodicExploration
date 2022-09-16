@@ -10,7 +10,7 @@ from cflib.crazyflie.swarm import Swarm
 # URIs for the swarm, change the last digit to match the crazyflies you are using.
 URI0 = 'radio://0/80/2M/E7E7E7E700'
 URI1 = 'radio://0/80/2M/E7E7E7E701'
-URI2 = 'radio://0/80/2M/E7E7E7E702'
+URI2 = 'radio://0/80/2M/E7E7E7E708'
 URI3 = 'radio://0/80/2M/E7E7E7E703'
 
 z0 = 0.4
