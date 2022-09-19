@@ -2,7 +2,7 @@ import jax.numpy as np
 
 class SingleIntegrator(object):
     def __init__(self) -> None:
-        self.dt = 0.1
+        self.dt = 0.2
         self.n = 2
         self.m = 2
         B = np.array([

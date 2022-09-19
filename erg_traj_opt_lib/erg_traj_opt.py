@@ -94,7 +94,7 @@ class ErgodicTrajectoryOpt(object):
             # obs_val = [vmap(_ob.distance)(p).flatten() for _ob in self.obs]
             obs_val = [vmap(_cbf_ineq, in_axes=(0,0,None))(x, u, args['alpha']).flatten() for _cbf_ineq in self.cbf_consts]
 
-            ctrl_box = [(np.abs(u) - 6.).flatten()]
+            ctrl_box = [(np.abs(u) - 1.).flatten()]
             _ineq_list = ctrl_box + obs_val
             return np.concatenate(_ineq_list)
 
@@ -108,7 +108,7 @@ class ErgodicTrajectoryOpt(object):
                                             ineq_constr, 
                                             args, 
                                             step_size=0.01,
-                                            c=0.1
+                                            c=0.5
                     )
         @jit
         def eval_erg_metric(x, args):

@@ -1,11 +1,12 @@
 import sys
 sys.path.append('../../')
 import numpy as np
+import random
 
 from erg_traj_opt_lib.motion_model import SingleIntegrator
 from erg_traj_opt_lib.target_distribution import TargetDistribution
 from erg_traj_opt_lib.fourier_utils import BasisFunc, get_phik
-from erg_traj_opt_lib.erg_traj_opt import ErgodicTrajectoryOpt
+from erg_traj_opt_lib.erg_traj_opt_normal import ErgodicTrajectoryOpt
 from erg_traj_opt_lib.obstacle import Obstacle
 
 import pickle as pkl
@@ -33,7 +34,8 @@ if __name__=='__main__':
         _ob = Obstacle(
             pos=np.array(obs_info[obs_name]['pos']), 
             half_dims=np.array(obs_info[obs_name]['half_dims']),
-            th=obs_info[obs_name]['rot']
+            th=obs_info[obs_name]['rot'],
+            buff=0.2
         )
         obs.append(_ob)
     
@@ -60,32 +62,49 @@ if __name__=='__main__':
 
     # set the seed 
     np.random.seed(10)
-    max_N    = 10
+    max_N    = 100
     succ_cnt = 0
     min_dist = 0.5
+    inits = np.array([])
+    finals = np.array([])
+    data = np.load('trajs_safety_critical_6/data_file.npy', allow_pickle=False)
     while succ_cnt < max_N:
-        x0 = np.random.uniform(wksp_bnds[:,0], wksp_bnds[:,1]) 
+        # x0 = np.random.uniform(wksp_bnds[:,0], wksp_bnds[:,1]) 
+        x0 = data[0, succ_cnt]
         if isSafe(x0, obs):
             dist = 0.
             while dist < min_dist:
-                xf = np.random.uniform(wksp_bnds[:,0], wksp_bnds[:,1])
+                # xf = np.random.uniform(wksp_bnds[:,0], wksp_bnds[:,1])
+                xf = data[1, succ_cnt]
                 if isSafe(xf, obs):
                     dist = np.linalg.norm(x0-xf)
 
             print('found candidate pair')
             print(x0, xf)
+            if inits.size == 0:
+                inits = x0
+                finals = xf
+            else:
+                inits = np.vstack((inits, x0))
+                finals = np.vstack((finals, xf))
             args.update({'x0' : x0})
             args.update({'xf' : xf})
             print('solving traj')
             (x, u), ifConv = traj_opt.get_trajectory(args=args)
             if ifConv:
                 print('solver converged')
-                plt.contour(X, Y, _mixed_vals, levels=[-0.01,0.,0.01], linewidths=2, colors='k')
-                plt.plot(x[:,0], x[:,1], linestyle='dashdot')#, c='m', alpha=alpha)
+                with open('trajs_normal_6_2/optimized_trajectories_%s.npy' % succ_cnt, 'wb') as f:
+                    np.save(f, np.array(x[:, :]))
+                # plt.contour(X, Y, _mixed_vals, levels=[-0.01,0.,0.01], linewidths=2, colors='k')
+                # plt.plot(x[:,0], x[:,1], linestyle='dashdot')#, c='m', alpha=alpha)
 
-                plt.tight_layout()
-                plt.axis('equal')
+                # plt.tight_layout()
+                # plt.axis('equal')
 
-                plt.show()
+                # plt.show()
                 succ_cnt += 1
+
+    dataarr = np.array([np.array(inits), np.array(finals)])
+    # with open('trajs_normal_3/data_file.npy', 'wb') as f:
+    #     np.save(f, dataarr)
         # TODO need to add in data saving here 
