@@ -57,6 +57,7 @@ class MAErgodicTrajectoryOpt(object):
         def barrier_cost(e):
             """ Barrier function to avoid robot going out of workspace """
             return (np.maximum(0, e-1) + np.maximum(0, -e))**2
+
         @jit
         def loss(z, args):
             """ Traj opt loss function, not the same as erg metric """
@@ -83,15 +84,15 @@ class MAErgodicTrajectoryOpt(object):
 
         def ineq_constr(z, args):
             """ control inequality constraints"""
-            x, u = z[:, :, :_n], z[:, :, _n:]
-            obs_val = [vmap(_cbf_ineq, in_axes=(0,0,None))(x, u, args['alpha']).flatten() for _cbf_ineq in self.cbf_consts]
+            x, u      = z[:, :, :_n], z[:, :, _n:]
+            obs_val   = [vmap(_cbf_ineq, in_axes=(0,0,None))(x, u, args['alpha']).flatten() for _cbf_ineq in self.cbf_consts]
             inter_col = [vmap(self.cbf_ma, in_axes=(0,0,None))(x, u, args['alpha']).flatten()]
 
-            ctrl_box = [(np.abs(u) - 6.).flatten()]
+            ctrl_box   = [(np.abs(u) - 6.).flatten()]
             _ineq_list = ctrl_box + obs_val + inter_col
             return np.concatenate(_ineq_list)
 
-        self.eq_constr = eq_constr
+        self.eq_constr   = eq_constr
         self.ineq_constr = ineq_constr
 
         self.solver = AugmentedLagrangian(

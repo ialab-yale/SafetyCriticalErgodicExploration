@@ -29,6 +29,7 @@ def motion_model_wrapper(f, f_erg, _emap):
         c2 = f_erg(_emap(x1, args), c1, args['phik'])
         return (x2, c2), np.concatenate([x2,c2])
     return _f
+    
 # def motion_model_wrapper(f):
 #     def _f(x1, u):
 #         x2 = f(x1, u)

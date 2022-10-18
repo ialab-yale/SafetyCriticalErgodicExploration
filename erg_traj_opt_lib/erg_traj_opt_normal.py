@@ -34,6 +34,7 @@ class ErgodicTrajectoryOpt(object):
             self.basis = basis
         self.erg_metric      = ErgodicMetric(self.basis)
         n,m = self.robot_model.n, self.robot_model.m
+        
         if args is None:
             self.target_distr = TargetDistribution()
             def_args = {
@@ -44,6 +45,7 @@ class ErgodicTrajectoryOpt(object):
             }
             args = def_args
         self.def_args = args
+        
         ### initial conditions 
         x = np.linspace(args['x0'], args['xf'], time_horizon, endpoint=True)
         u = np.zeros((time_horizon, self.robot_model.m))
@@ -62,9 +64,11 @@ class ErgodicTrajectoryOpt(object):
                 (x[0]-wrksp_bnds[0,0])/(wrksp_bnds[0,1]-wrksp_bnds[0,0]), 
                 (x[1]-wrksp_bnds[1,0])/(wrksp_bnds[1,1]-wrksp_bnds[1,0])])
         emap = vmap(_emap, in_axes=(0, None))
+        
         def barrier_cost(e):
             """ Barrier function to avoid robot going out of workspace """
             return (np.maximum(0, e-1) + np.maximum(0, -e))**2
+        
         @jit
         def loss(z, args):
             """ Traj opt loss function, not the same as erg metric """
