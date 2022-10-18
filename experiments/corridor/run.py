@@ -35,6 +35,16 @@ if __name__=='__main__':
         [0.25, 0.25]
     ])
 
+    # x0 = np.array([
+    #     [1.00, 0.25],
+    #     [1.00, 1.75]
+    # ])
+    
+    # xf = np.array([
+    #     [1.00, 1.75],
+    #     [1.00, 0.25]
+    # ])
+
     args = {
         # 'x0' : -np.ones((N_robots, n_states))+np.random.normal(0., 0.1, size=(N_robots, n_states)),
         # 'xf' :  np.ones((N_robots, n_states))+np.random.normal(0., 0.3, size=(N_robots, n_states)),
