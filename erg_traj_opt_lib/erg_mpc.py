@@ -135,6 +135,7 @@ class ErgodicMPC(object):
             # _ineq_list = ctrl_box + obs_val
             _ineq_list = obs_val
             return np.concatenate(_ineq_list)
+            
         @jit
         def loss(z, args):
             """ Traj opt loss function, not the same as erg metric """
@@ -144,7 +145,7 @@ class ErgodicMPC(object):
             c  = args['c']
             u  = z['u']
             mu = z['mu']
-            (xf, cf), z        = scan(partial(self.traj_sim, args=args), (x0, c0), u)
+            (xf, cf), z = scan(partial(self.traj_sim, args=args), (x0, c0), u)
             x, ck = z[:,:n], z[:,n:]
             _ineq_constr = ineq_constr(x, u, args)
             phik = args['phik']

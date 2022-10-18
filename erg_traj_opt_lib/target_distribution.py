@@ -3,12 +3,12 @@ from jax import vmap
 
 class TargetDistribution(object):
     def __init__(self) -> None:
-        self.n = 2
+        self.n      = 2
         self.domain = np.meshgrid(
             *[np.linspace(0,1)]*self.n
         )
-        self._s = np.stack([X.ravel() for X in self.domain]).T
-        self.evals = (
+        self._s     = np.stack([X.ravel() for X in self.domain]).T
+        self.evals  = (
             vmap(self.p)(self._s) , self._s
         )
 

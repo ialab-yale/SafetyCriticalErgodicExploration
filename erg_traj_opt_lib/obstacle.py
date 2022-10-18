@@ -24,7 +24,8 @@ class Obstacle(object):
     
     def draw(self):
         rect = plt.Rectangle(self.pos-self.half_dims, 
-                            self.dims[0], self.dims[1])
+                             self.dims[0], self.dims[1]
+                             )
         return rect
     def distance(self, x):
         # return 1.0 - np.linalg.norm(self.rot @ ((x-self.pos)/(self.half_dims+self.buff)), ord=4)

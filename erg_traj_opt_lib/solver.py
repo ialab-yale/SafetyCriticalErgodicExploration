@@ -6,20 +6,21 @@ import jax.numpy as np
 
 class AugmentedLagrangian(object):
     def __init__(self, x0, loss, eq_constr, ineq_constr, args=None, step_size=1e-3, c=1.0):
-        self.def_args = args
-        self.loss = loss 
-        self.c = c
+        self.def_args    = args
+        self.loss        = loss 
+        self.c           = c
         self.eq_constr   = eq_constr
         self.ineq_constr = ineq_constr
         _eq_constr       = eq_constr(x0, args)
         _ineq_constr     = ineq_constr(x0, args)
-        lam = np.zeros(_eq_constr.shape)
-        mu  = np.zeros(_ineq_constr.shape)
-        self._x_shape = x0.shape
-        self.solution = {'x' : x0, 'lam' : lam, 'mu' : mu}
+        lam              = np.zeros(_eq_constr.shape)
+        mu               = np.zeros(_ineq_constr.shape)
+        self._x_shape    = x0.shape
+        self.solution    = {'x' : x0, 'lam' : lam, 'mu' : mu}
         self.avg_sq_grad = np.zeros_like(x0)
-        self._prev_val = None
+        self._prev_val   = None
         # self._flat_solution, self._unravel = ravel_pytree(self.solution)
+
         def lagrangian(solution, args, c):
             # solution = self._unravel(flat_solution)
             x   = solution['x']
@@ -32,8 +33,9 @@ class AugmentedLagrangian(object):
                 + (1/c)*0.5 * np.sum(np.maximum(0., mu + c*_ineq_constr)**2 - mu**2)
 
         val_dldx = jit(value_and_grad(lagrangian))
-        gamma=0.9
-        eps=1e-8
+        gamma   = 0.9
+        eps     = 1e-8
+
         @jit
         def step(solution, args, avg_sq_grad, c):
             _val, _dldx   = val_dldx(solution, args, c)
@@ -51,14 +53,16 @@ class AugmentedLagrangian(object):
     def get_solution(self):
         return self.solution
         # return self._unravel(self._flat_solution)
+
     def set_init_cond(self, x):
         self.solution.update({'x' : x.copy()})
 
     def solve(self, args=None, max_iter=100000, eps=1e-7):
         if args is None:
             args = self.def_args
-        _eps = 1.0
-        _prev_val = None
+        _eps        = 1.0
+        _prev_val   = None
+
         for k in range(max_iter):
             self.solution, _val, self.avg_sq_grad = self.step(self.solution, args, self.avg_sq_grad, self.c)
             # self.c = 1.001*self.c
