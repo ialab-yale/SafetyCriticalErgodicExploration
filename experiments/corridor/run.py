@@ -46,12 +46,12 @@ if __name__=='__main__':
     }
 
     # Set up corridor
-    R_drone = 0.07      # radius of drone in m
+    R_drone = 0.125      # radius of drone in m
     w = 2.0 - R_drone   # width of left/right sides of the corridore for a 2.0 x 2.0 workspace
     h = 1.0             # height of the corridor, gives each drone a 1.0 x 0.5 space to search in
     obs = [
-        Obstacle(pos=np.array([0, 1.0]),           half_dims=np.array([w/2,h/2]), th=0., buff=0.0, p=4),
-        Obstacle(pos=np.array([w + R_drone, 1.0]), half_dims=np.array([w/2,h/2]), th=0., buff=0.0, p=4),
+        Obstacle(pos=np.array([0, 1.0]),           half_dims=np.array([w/2,h/2]), th=0., buff=0.0, p=12),
+        Obstacle(pos=np.array([w + R_drone, 1.0]), half_dims=np.array([w/2,h/2]), th=0., buff=0.0, p=12),
     ]
 
     traj_opt = MAErgodicTrajectoryOpt(robot_model, obstacles=obs, basis=basis, time_horizon=200, args=args)
