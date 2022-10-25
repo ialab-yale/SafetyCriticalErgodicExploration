@@ -24,6 +24,6 @@ def animate(i):
 anim = animation.FuncAnimation(fig, animate, frames = len(traj0[0,:]) + 1, interval = 1, blit = False)
 
 writervideo = animation.FFMpegWriter(fps=30)
-anim.save('corridor.mp4', writer=writervideo)
+anim.save('small_pertubation.mp4', writer=writervideo)
 
 plt.show()
