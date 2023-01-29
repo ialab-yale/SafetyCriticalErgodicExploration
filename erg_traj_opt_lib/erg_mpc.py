@@ -45,10 +45,12 @@ class MPCSolver(object):
         self.loss = loss
         self.val_dldu = jit(value_and_grad(self.loss))
         self.dl2du2 = jit(hessian(self.loss))
+
     def solver_step(self, args, step_size=1e-1, max_iter=1000, eps=1e-6):
         self._shift_solution()
         _eps = 1.0
         _prev_val = None
+
         for k in range(max_iter):
             # _val, _dldu   = self.val_dldu(self._flat_solution, args)
             # _dl2du2 = self.dl2du2(self._flat_solution, args)
@@ -58,8 +60,8 @@ class MPCSolver(object):
             # for _key in self.solution:
             #     self.solution[_key]   = self.solution[_key] - step_size * _dldu[_key]
 
-            self.solution['u']   = self.solution['u']   - step_size * _dldu['u']
-            self.solution['mu']   = self.solution['mu'] - step_size * _dldu['mu']
+            self.solution['u']  = self.solution['u']  - step_size * _dldu['u']
+            self.solution['mu'] = self.solution['mu'] - step_size * _dldu['mu']
 
             if _prev_val is None:
                 _prev_val = _val

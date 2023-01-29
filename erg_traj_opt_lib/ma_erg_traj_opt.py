@@ -57,7 +57,7 @@ class MAErgodicTrajectoryOpt(object):
         def barrier_cost(e):
             """ Barrier function to avoid robot going out of workspace """
             return (np.maximum(0, e-1) + np.maximum(0, -e))**2
-
+    
         @jit
         def loss(z, args):
             """ Traj opt loss function, not the same as erg metric """
@@ -72,14 +72,14 @@ class MAErgodicTrajectoryOpt(object):
         def eq_constr(z, args):
             """ dynamic equality constriants """
             x, u = z[:, :, :_n], z[:, :, _n:]
-            x0 = args['x0']
-            xf = args['xf']
-            re = x[1:,:]-vmap(self.robot_model.f)(x[:-1,:], u[:-1,:])
-            val= np.concatenate([
-                (x[0] - x0).flatten(),
-                re.flatten(),
-                (x[-1] - xf).flatten()
-            ])
+            x0   = args['x0']
+            xf   = args['xf']
+            re   = x[1:,:]-vmap(self.robot_model.f)(x[:-1,:], u[:-1,:])
+            val  = np.concatenate([
+                                    (x[0] - x0).flatten(),
+                                    re.flatten(),
+                                    (x[-1] - xf).flatten()
+                                 ])
             return val
 
         def ineq_constr(z, args):
