@@ -14,7 +14,7 @@ import pickle as pkl
 if __name__=='__main__':
 
 
-    robot_model     = MultiRobotSingleIntegrator()
+    robot_model     = MultiRobotSingleIntegrator(N=4)
     n_states        = robot_model.n
     N_robots        = robot_model.N
     m_ctrls         = robot_model.m
