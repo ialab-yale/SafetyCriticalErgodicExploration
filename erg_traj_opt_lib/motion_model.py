@@ -9,6 +9,8 @@ class SingleIntegrator(object):
                 [1.,0.],
                 [0.,1.]
             ])
+        def dfdt(x, u):
+            return B @ u  
         def f(x, u):
             return x + self.dt*B@u
         self.f = f
