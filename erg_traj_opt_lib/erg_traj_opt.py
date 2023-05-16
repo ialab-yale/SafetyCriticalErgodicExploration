@@ -29,7 +29,7 @@ class ErgodicTrajectoryOpt(object):
         self.time_horizon    = time_horizon
         self.robot_model     = robot_model
         if basis is None:
-            self.basis = BasisFunc(n_basis=[8]*2)
+            self.basis = BasisFunc(n_basis=[8]*2)   # taking the first 8 modes
         else:
             self.basis = basis
         self.erg_metric      = ErgodicMetric(self.basis)
@@ -37,13 +37,14 @@ class ErgodicTrajectoryOpt(object):
         if args is None:
             self.target_distr = TargetDistribution()
             def_args = {
-                'x0' : np.array([2.0,3.25, 0.]),
+                'x0' : np.array([2.00,  3.25, 0.]),
                 'xf' : np.array([1.75, -0.75, 0.]),
                 'phik' : get_phik(self.target_distr.evals, self.basis),
                 'wrksp_bnds' : np.array([[0.,3.5],[-1.,3.5]])
             }
             args = def_args
         self.def_args = args
+
         ### initial conditions 
         x = np.linspace(args['x0'], args['xf'], time_horizon, endpoint=True)
         u = np.zeros((time_horizon, self.robot_model.m))
@@ -62,9 +63,11 @@ class ErgodicTrajectoryOpt(object):
                 (x[0]-wrksp_bnds[0,0])/(wrksp_bnds[0,1]-wrksp_bnds[0,0]), 
                 (x[1]-wrksp_bnds[1,0])/(wrksp_bnds[1,1]-wrksp_bnds[1,0])])
         emap = vmap(_emap, in_axes=(0, None))
+        
         def barrier_cost(e):
             """ Barrier function to avoid robot going out of workspace """
             return (np.maximum(0, e-1) + np.maximum(0, -e))**2
+        
         @jit
         def loss(z, args):
             """ Traj opt loss function, not the same as erg metric """
@@ -110,13 +113,14 @@ class ErgodicTrajectoryOpt(object):
                                             step_size=0.01,
                                             c=0.1
                     )
+                        
         @jit
         def eval_erg_metric(x, args):
             """ evaluates the ergodic metric on a trjaectory  """
             x
             phik = args['phik']
-            e = emap(x, args)
-            ck = get_ck(e, self.basis)
+            e    = emap(x, args)
+            ck   = get_ck(e, self.basis)
             return self.erg_metric(ck, phik)
         self.eval_erg_metric = eval_erg_metric
         

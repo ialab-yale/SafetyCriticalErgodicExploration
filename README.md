@@ -1,2 +1,1 @@
 # SafetyCriticalErgodicExploration
-# SafetyCriticalErgodicExploration

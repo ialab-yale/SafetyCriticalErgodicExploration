@@ -64,7 +64,7 @@ class MAErgodicTrajectoryOpt(object):
             phik = args['phik']
             e = emap(x, args)
             ck = np.mean(vmap(get_ck, in_axes=(1, None))(e, self.basis), axis=0)
-            return self.erg_metric(ck, phik) \
+            return 10*self.erg_metric(ck, phik) \
                     + 0.1 * np.mean(u**2) \
                     + np.sum(barrier_cost(e))
 
@@ -101,7 +101,7 @@ class MAErgodicTrajectoryOpt(object):
                                             ineq_constr, 
                                             args, 
                                             step_size=0.01,
-                                            c=0.1
+                                            c=0.5
                     )
         @jit
         def eval_erg_metric(x, args):
@@ -119,6 +119,7 @@ class MAErgodicTrajectoryOpt(object):
         self.solver.set_init_cond(self.init_sol)
         ifConv = self.solver.solve(max_iter=max_iter, args=args)
         sol = self.solver.get_solution()
+        self.sol = sol
         x = sol['x'][:,:,:self.robot_model.n]
         u = sol['x'][:,:,self.robot_model.n:]
         self.curr_sol = (x, u)

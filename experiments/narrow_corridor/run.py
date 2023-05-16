@@ -13,8 +13,7 @@ import pickle as pkl
 
 if __name__=='__main__':
 
-
-    robot_model     = MultiRobotSingleIntegrator(N=4)
+    robot_model     = MultiRobotSingleIntegrator()
     n_states        = robot_model.n
     N_robots        = robot_model.N
     m_ctrls         = robot_model.m
@@ -27,26 +26,35 @@ if __name__=='__main__':
 
     x0 = np.array([
         [1.0, -0.5],
-        [2.5, -0.5],
-        [1.0,  2.5],
-        [3.0, 3.0]
-    ])
-    xf = np.array([
-        [1.0, 2.5],
-        [3.0, 3.0],
-        [1.0, -0.5],
         [2.5, -0.5]
     ])
+    
+    xf = np.array([
+        [1.0, 2.5],
+        [3.0, 3.0]
+    ])
+
     args = {
         'x0' : x0,
         'xf' : xf,
         'phik' : get_phik(target_distr.evals, basis),
-        'wrksp_bnds' : np.array([[0.,3.5],[-1.,3.5]]),
+        'wrksp_bnds' : np.array([[0.,2.0],[0.,2.0]]),
+        # 'wrksp_bnds' : np.array([[0.,3.5],[-1.,3.5]]),
         'alpha' : 0.1
     }
 
-    obs_info = pkl.load(open('../../erg_traj_opt_lib/obs_info.pkl', 'rb'))
+    # Set up corridor
+    R_drone = 0.07          # radius of drone in m
+    obs_w   = 
+    obs_h   = 
+    obs1    = Obstacle(
+
+    
     obs = []
+    obs.append(obs1)
+    obs.append(obs2)
+
+    obs1 = Obstacle([ ], [ ], )
     for obs_name in obs_info:
         _obs = Obstacle(
             pos=np.array(obs_info[obs_name]['pos']), 

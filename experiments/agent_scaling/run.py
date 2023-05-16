@@ -1,6 +1,7 @@
 import sys
 sys.path.append('../../')
 import numpy as np
+import time
 
 from erg_traj_opt_lib.motion_model import MultiRobotSingleIntegrator
 from erg_traj_opt_lib.target_distribution import TargetDistribution
@@ -68,10 +69,25 @@ if __name__=='__main__':
 
     # plt.figure(figsize=(3,2))
 
-    print('solving traj')
-    (x, u), isConv = traj_opt.get_trajectory(args=args, max_iter=20000)
+    max_N    = 10
+    succ_cnt = 0
+    min_dist = 0.5
+    inits = np.array([])
+    finals = np.array([])
 
-    _ineq = traj_opt.ineq_constr(traj_opt.sol['x'], args)
+    print('solving traj')
+    start = time.time()
+
+    while succ_cnt < max_N:
+        (x, u), isConv = traj_opt.get_trajectory(args=args, max_iter=20000)
+
+        _ineq = traj_opt.ineq_constr(traj_opt.sol['x'], args)
+
+        succ_cnt += 1
+    
+    end = time.time()
+    delta = end - start
+
     plt.figure(2)
     plt.plot(_ineq)
     plt.show()
