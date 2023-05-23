@@ -4,5 +4,23 @@
     ],
     "python.analysis.extraPaths": [
         "/opt/ros/noetic/lib/python3/dist-packages"
-    ]
+    ],
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#fef6f5",
+        "activityBar.activeBorder": "#14cb29",
+        "activityBar.background": "#fef6f5",
+        "activityBar.foreground": "#15202b",
+        "activityBar.inactiveForeground": "#15202b99",
+        "activityBarBadge.background": "#14cb29",
+        "activityBarBadge.foreground": "#15202b",
+        "statusBar.background": "#f7cac9",
+        "statusBar.foreground": "#15202b",
+        "statusBarItem.hoverBackground": "#f09e9d",
+        "tab.activeBorder": "#fef6f5",
+        "titleBar.activeBackground": "#f7cac9",
+        "titleBar.activeForeground": "#15202b",
+        "titleBar.inactiveBackground": "#f7cac999",
+        "titleBar.inactiveForeground": "#15202b99"
+    },
+    "peacock.color": "#F7CAC9"
 }

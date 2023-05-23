@@ -3,7 +3,7 @@
 </h1>
 
 <p align="justify">
-Code for <a href="">Safety-Critical Ergodic Exploration in Cluttered Environments via Control Barrier Functions</a>. Cameron Lerch, Dayi Dong, and Ian Abraham. In International Conference on Robotics and Automation (ICRA), 2023.
+Code for <a href="https://arxiv.org/abs/2211.04310">Safety-Critical Ergodic Exploration in Cluttered Environments via Control Barrier Functions</a>. Cameron Lerch, Dayi Dong, and Ian Abraham. In International Conference on Robotics and Automation (ICRA), 2023.
 <!-- Additional results and multimedia videos found <a href="https://sites.google.com/view/time-optimal-ergodic-search">here</a>. -->
 </p>
 
