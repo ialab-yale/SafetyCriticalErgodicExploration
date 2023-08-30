@@ -137,31 +137,31 @@ class ErgodicTrajectoryOpt(object):
         return (x, u), ifConv
 
 # <-- example code for how to use 
-# if __name__=='__main__':
-#     import sys 
-#     import matplotlib.pyplot as plt
+if __name__=='__main__':
+    import sys 
+    import matplotlib.pyplot as plt
 
-#     robot_model     = SingleIntegrator()
-#     target_distr    = TargetDistribution()
-#     basis           = BasisFunc(n_basis=[8,8])
-#     args = {
-#         'x0' : np.array([2.0,3.25, 0.]),
-#         'xf' : np.array([1.75, -0.75, 0.]),
-#         'phik' : get_phik(target_distr.evals, basis),
-#         'wrksp_bnds' : np.array([[0.,3.5],[-1.,3.5]])
-#     }
-#     traj_opt = ErgodicTrajectoryOpt(robot_model, basis=basis, time_horizon=250, args=args)
-#     print('solving traj')
-#     x, u = traj_opt.get_trajectory()
+    robot_model     = SingleIntegrator()
+    target_distr    = TargetDistribution()
+    basis           = BasisFunc(n_basis=[8,8])
+    args = {
+        'x0' : np.array([2.0,3.25, 0.]),
+        'xf' : np.array([1.75, -0.75, 0.]),
+        'phik' : get_phik(target_distr.evals, basis),
+        'wrksp_bnds' : np.array([[0.,3.5],[-1.,3.5]])
+    }
+    traj_opt = ErgodicTrajectoryOpt(robot_model, basis=basis, time_horizon=250, args=args)
+    print('solving traj')
+    x, u = traj_opt.get_trajectory()
 
-#     # plotting function
-#     for obs in traj_opt.obs:
-#         _patch = obs.draw()
-#         plt.gca().add_patch(_patch)
-#     # _mixed_vals = np.inf*np.ones_like(X)
-#     # for obs in traj_opt.obs:
-#     #     _vals = vmap(obs.distance)(pnts).reshape(X.shape)
-#     #     _mixed_vals = np.minimum(_vals, _mixed_vals)
-#     #     plt.contour(X, Y, _vals.reshape(X.shape), levels=[-0.01,0.,0.01])
-#     plt.plot(x[:,0], x[:,1], 'r')
-#     plt.show()
+    # plotting function
+    for obs in traj_opt.obs:
+        _patch = obs.draw()
+        plt.gca().add_patch(_patch)
+    # _mixed_vals = np.inf*np.ones_like(X)
+    # for obs in traj_opt.obs:
+    #     _vals = vmap(obs.distance)(pnts).reshape(X.shape)
+    #     _mixed_vals = np.minimum(_vals, _mixed_vals)
+    #     plt.contour(X, Y, _vals.reshape(X.shape), levels=[-0.01,0.,0.01])
+    plt.plot(x[:,0], x[:,1], 'r')
+    plt.show()

@@ -50,9 +50,18 @@ if __name__=='__main__':
     _s           = target_distr._s
     vals         = target_distr.evals[0]
 
+    # fig, ax = plt.subplots()
     plt.figure()
-    plt.contour(tar_X, tar_Y, vals.reshape(tar_X.shape), linewidths=2, colors='k')
-    plt.plot(x[:,0], x[:, 1], linestyle='dashdot')#, c='m', alpha=alpha)
-    plt.scatter(x[-1,0], x[-1, 1], s=80, marker='o', color='r')
-    plt.scatter(x[0,0], x[0, 1], s=80, marker='o', color='g')
-    plt.savefig('trajectory.png')
+    # plt.contour(tar_X, tar_Y, vals.reshape(tar_X.shape), linewidths=2, colors='k')
+    plt.contourf(tar_X, tar_Y, vals.reshape(tar_X.shape), cmap='cividis')
+    # plt.plot(x[:,0], x[:, 1], linewidth=4.0, color='r')
+    # plt.scatter(x[-1,0], x[-1, 1], s=80, marker='o', color='r')
+    # plt.scatter(x[0,0], x[0, 1], s=80, marker='o', color='g')
+    ax = plt.gca()
+    ax.set_aspect('equal', adjustable='box')
+    plt.xlim([0,1])
+    plt.ylim([0,1])
+    plt.xlabel("x")
+    plt.ylabel("y")
+    
+    plt.savefig('target_dist_bimodal_dist_contourf.png')
